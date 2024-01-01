@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using SupermarketMVC.Data;
+using Microsoft.AspNetCore.Identity;
+using SupermarketMVC.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("IdentityContextConnection") ?? throw new InvalidOperationException("Connection string 'IdentityContextConnection' not found.");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -11,6 +14,8 @@ builder.Services.AddDbContext<SupermarketContext>(options =>
 {
     options.UseInMemoryDatabase("InMemoryDb");
 });
+builder.Services.AddDbContext<IdentityContext>(options =>options.UseSqlite(connectionString));
+builder.Services.AddDefaultIdentity<UserIdentity>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<IdentityContext>();
 
 var app = builder.Build();
 
@@ -26,11 +31,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();   
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.MapRazorPages();
 app.Run();
