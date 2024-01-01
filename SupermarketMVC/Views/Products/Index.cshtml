@@ -1,0 +1,81 @@
+﻿@model PaginatedList<SupermarketMVC.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@* Search Form *@
+<form asp-action="Index" method="get">
+    <p>
+        Search: <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" />
+        <input type="submit" value="Search" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParam, searchString = ViewBag.CurrentFilter, page = 1 })
+            </th>
+            <th>
+                @Html.ActionLink("Price", "Index", new { sortOrder = ViewBag.PriceSortParam, searchString = ViewBag.CurrentFilter, page = 1 })
+            </th>
+            <th>
+                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CategorySortParam, searchString = ViewBag.CurrentFilter, page = 1 })
+            </th>
+            <th>
+                @Html.ActionLink("Supplier", "Index", new { sortOrder = ViewBag.SupplierSortParam, searchString = ViewBag.CurrentFilter, page = 1 })
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.SupplierId)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* Pagination Controls *@
+@if (Model.TotalPages > 1)
+{
+    <div>
+        Page @(Model.PageIndex) of @(Model.TotalPages)
+
+        @if (Model.HasPreviousPage)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.PageIndex - 1)" asp-route-sortOrder="@ViewBag.CurrentSort" asp-route-searchString="@ViewBag.CurrentFilter">Previous</a>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewBag.CurrentSort" asp-route-searchString="@ViewBag.CurrentFilter">Next</a>
+        }
+    </div>
+}

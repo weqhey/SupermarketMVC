@@ -1,0 +1,63 @@
+﻿@model PaginatedList<SupermarketMVC.Models.Category>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@* Search Form *@
+<form asp-action="Index" method="get">
+    <p>
+        Search: <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" />
+        <input type="submit" value="Search" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParam, searchString = ViewBag.CurrentFilter })
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CategoryId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.CategoryId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* Pagination Controls *@
+@if (Model.TotalPages > 1)
+{
+    <div>
+        Page @(Model.PageIndex) of @(Model.TotalPages)
+
+        @if (Model.HasPreviousPage)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.PageIndex - 1)" asp-route-sortOrder="@ViewBag.CurrentSort" asp-route-searchString="@ViewBag.CurrentFilter">Previous</a>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.PageIndex + 1)" asp-route-sortOrder="@ViewBag.CurrentSort" asp-route-searchString="@ViewBag.CurrentFilter">Next</a>
+        }
+    </div>
+}
